@@ -47,17 +47,17 @@ class App extends React.Component {
       },
     }
   }
+  newRandomCard = () => {
+    const id = Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4);
+    return {
+      id,
+      title: `Random Card ${id}`,
+      content: 'lorem ipsum',
+    }
+  }
   handleAddRandomCard = (listId) => {
     // create a new card object with random card added
-    const newRandomCard = () => {
-      const id = Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4);
-      return {
-        id,
-        title: `Random Card ${id}`,
-        content: 'lorem ipsum',
-      }
-    }
-    const newCard = newRandomCard()
+    const newCard = this.newRandomCard()
     const newCardsObj = {...this.state.allCards, [newCard.id]: newCard}
     // create a new list array with the random card added
     // to the list where the button was pressed
@@ -76,6 +76,13 @@ class App extends React.Component {
       allCards: newCardsObj
     })
   }
+  omit = (obj, cardId) => {
+    return Object.entries(obj).reduce(
+      (newObj, [key, value]) =>
+        key === cardId ? newObj : {...newObj, [key]: value},
+        {}
+    );
+  }
   handleDeleteCard = (cardId) => {
     // creates new list array with references to deleted card removed
     const newLists = this.state.lists.map(
@@ -85,19 +92,14 @@ class App extends React.Component {
       }
     )
     // creates new cards object with deleted card removed
-    function omit(obj, cardId) {
-      return Object.entries(obj).reduce(
-        (newObj, [key, value]) =>
-          key === cardId ? newObj : {...newObj, [key]: value},
-          {}
-      );
-    }
-    const newCardsObj = omit(this.state.allCards, cardId)
+    
+    const newCardsObj = this.omit(this.state.allCards, cardId)
     // updates state with new list array and new cards object
     this.setState({
       lists: newLists,
       allCards: newCardsObj
     })
+    console.log(this.state)
   }
   render() {
     console.log(this.state.lists, this.state.allCards)
